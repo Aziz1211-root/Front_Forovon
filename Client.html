@@ -302,7 +302,7 @@
     <div class="header-logo">F</div>
     <div class="header-title">
       <h1>Farovon</h1>
-      <p>Оформление заказа</p>
+      <p>Оформление оптового и розничного заказа</p>
     </div>
   </div>
 
@@ -420,11 +420,19 @@
 
     // 2. Каталог продукции Farovon (база для автодополнения и автоматического расчета веса/цены)
     const CATALOG = [
-      { id: 1, name: "Мука (50 кг)", weightPerUnit: 50, pricePerUnit: 240 },
+      { id: 1, name: "Мука Farovon 1 сорт (50 кг)", weightPerUnit: 50, pricePerUnit: 240 },
+      { id: 2, name: "Мука Farovon высший сорт (50 кг)", weightPerUnit: 50, pricePerUnit: 270 },
+      { id: 3, name: "Мука Farovon 2 сорт (50 кг)", weightPerUnit: 50, pricePerUnit: 210 },
+      { id: 4, name: "Мука Farovon (25 кг)", weightPerUnit: 25, pricePerUnit: 140 },
+      { id: 5, name: "Сахар-песок (50 кг)", weightPerUnit: 50, pricePerUnit: 460 },
+      { id: 6, name: "Рис Лазер (25 кг)", weightPerUnit: 25, pricePerUnit: 350 },
+      { id: 7, name: "Комбикорм для птиц Farovon (50 кг)", weightPerUnit: 50, pricePerUnit: 220 },
+      { id: 8, name: "Комбикорм для КРС Farovon (50 кг)", weightPerUnit: 50, pricePerUnit: 190 },
+      { id: 9, name: "Масло растительное Farovon (5 л)", weightPerUnit: 4.6, pricePerUnit: 75 }
     ];
 
     // Заполнение datalist
-    const datalist = document.getElementById('products-catalog');ы
+    const datalist = document.getElementById('products-catalog');
     CATALOG.forEach(p => {
       const option = document.createElement('option');
       option.value = p.name;
@@ -433,7 +441,7 @@
 
     // 3. Получение адреса и параметров доставки из URL (переданных ботом C#)
     const urlParams = new URLSearchParams(window.location.search);
-    const passedAddress = urlParams.get('address') || (tg?.initDataUnsafe?.user ? "Адрес из профиля клиента" : "у вас еще нету адресса");
+    const passedAddress = urlParams.get('address') || (tg?.initDataUnsafe?.user ? "Адрес из профиля клиента" : "г. Душанбе, ул. Айни");
     const baseDeliveryCostPerTon = parseFloat(urlParams.get('deliveryRate')) || 50; // Базовая ставка за тонну
 
     document.getElementById('user-address-text').innerText = decodeURIComponent(passedAddress);
