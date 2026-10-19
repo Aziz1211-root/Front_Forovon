@@ -1,681 +1,839 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Farovon — Заказ продукции</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    :root {
-      --bg: var(--tg-theme-bg-color, #f5f6f8);
-      --card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
-      --text: var(--tg-theme-text-color, #1a1a1a);
-      --hint: var(--tg-theme-hint-color, #707579);
-      --btn: var(--tg-theme-button-color, #248bcf);
-      --btn-text: var(--tg-theme-button-text-color, #ffffff);
-      --border: #e2e5e9;
-      --danger: #e53935;
-      --success: #2e7d32;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Farovon — Заказ продукции</title>
+    <!-- Telegram Web App JS SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #f4f5f7);
+            --card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
+            --text-color: var(--tg-theme-text-color, #1a1a1a);
+            --hint-color: var(--tg-theme-hint-color, #8e8e93);
+            --button-color: var(--tg-theme-button-color, #248bcf);
+            --button-text-color: var(--tg-theme-button-text-color, #ffffff);
+            --border-color: rgba(0, 0, 0, 0.08);
+            --accent-green: #2ecc71;
+            --danger-color: #e74c3c;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 16px;
-      padding-bottom: 90px;
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 14px;
+            padding-bottom: 95px; /* отступ под нижнюю кнопку */
+        }
 
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
 
-    .header-logo {
-      width: 44px;
-      height: 44px;
-      background: var(--btn);
-      color: var(--btn-text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 700;
-      border-radius: 12px;
-    }
+        .brand-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--button-color);
+            letter-spacing: 0.5px;
+        }
 
-    .header-title h1 {
-      font-size: 18px;
-      font-weight: 700;
-    }
+        .card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+        }
 
-    .header-title p {
-      font-size: 12px;
-      color: var(--hint);
-    }
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .card {
-      background: var(--card-bg);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 14px;
-      border: 1px solid var(--border);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-    }
+        /* Строки товаров */
+        .product-row {
+            position: relative;
+            background: rgba(125, 125, 125, 0.04);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+        }
 
-    .section-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--hint);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
 
-    .product-row {
-      position: relative;
-      background: var(--bg);
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-    }
+        .item-counter {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--hint-color);
+        }
 
-    .remove-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: transparent;
-      border: none;
-      color: var(--danger);
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      line-height: 1;
-      padding: 4px;
-    }
+        .btn-remove {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            font-size: 18px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 2px 6px;
+        }
 
-    .form-group {
-      margin-bottom: 8px;
-    }
+        .input-group {
+            position: relative;
+            margin-bottom: 8px;
+        }
 
-    label {
-      font-size: 12px;
-      color: var(--hint);
-      display: block;
-      margin-bottom: 4px;
-    }
+        label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--hint-color);
+            margin-bottom: 4px;
+        }
 
-    input, select, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      color: var(--text);
-      font-size: 14px;
-      outline: none;
-      transition: border 0.2s;
-    }
+        input, textarea, select {
+            width: 100%;
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
 
-    input:focus, textarea:focus {
-      border-color: var(--btn);
-    }
+            input:focus, textarea:focus, select:focus {
+                border-color: var(--button-color);
+            }
 
-    .qty-weight-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+        /* Выпадающий список подсказок (Умный поиск с автозаполнением) */
+        .suggestions-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 190px;
+            overflow-y: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            z-index: 100;
+            display: none;
+        }
 
-    .row-summary {
-      font-size: 12px;
-      color: var(--hint);
-      margin-top: 6px;
-      display: flex;
-      justify-content: space-between;
-      font-weight: 500;
-    }
+        .suggestion-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+        }
 
-    .row-summary span.highlight {
-      color: var(--btn);
-      font-weight: 700;
-    }
+            .suggestion-item:last-child {
+                border-bottom: none;
+            }
 
-    .add-btn {
-      width: 100%;
-      padding: 10px;
-      background: transparent;
-      border: 2px dashed var(--btn);
-      color: var(--btn);
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      margin-top: 4px;
-    }
+            .suggestion-item:hover, .suggestion-item.active {
+                background-color: rgba(36, 139, 207, 0.1);
+            }
 
-    /* Радиокнопки выбора Доставка/Самовывоз */
-    .delivery-toggle {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
+        .qty-calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            align-items: center;
+        }
 
-    .toggle-option {
-      position: relative;
-    }
+        .subtotal-badge {
+            font-size: 12px;
+            color: var(--hint-color);
+            margin-top: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-    .toggle-option input {
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-    }
+        .btn-add-item {
+            width: 100%;
+            padding: 11px;
+            background: rgba(36, 139, 207, 0.1);
+            color: var(--button-color);
+            border: 1px dashed var(--button-color);
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
 
-    .toggle-option label {
-      display: block;
-      padding: 10px;
-      text-align: center;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 13px;
-      color: var(--text);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
+        /* Доставка и логистика */
+        .delivery-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
 
-    .toggle-option input:checked + label {
-      background: var(--btn);
-      color: var(--btn-text);
-      border-color: var(--btn);
-    }
+        .radio-pill {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
 
-    .address-card {
-      background: rgba(36, 139, 207, 0.08);
-      border: 1px solid rgba(36, 139, 207, 0.3);
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
+            .radio-pill.selected {
+                background: var(--button-color);
+                color: var(--button-text-color);
+                border-color: var(--button-color);
+            }
 
-    .checkbox-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      margin-top: 6px;
-      padding: 8px 0;
-    }
+        .info-box {
+            font-size: 13px;
+            color: var(--hint-color);
+            padding: 8px 10px;
+            background: rgba(125, 125, 125, 0.05);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
 
-    .checkbox-container input {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--btn);
-    }
+            .info-box strong {
+                color: var(--text-color);
+            }
 
-    .checkbox-container span {
-      font-size: 14px;
-      font-weight: 500;
-    }
+        /* Чекбокс грузчика */
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            cursor: pointer;
+        }
 
-    .info-badge {
-      font-size: 12px;
-      color: var(--hint);
-      margin-top: 2px;
-    }
+            .checkbox-row input[type="checkbox"] {
+                width: 20px;
+                height: 20px;
+                accent-color: var(--button-color);
+            }
 
-    /* Итоговая сводка */
-    .summary-line {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      color: var(--hint);
-      margin-bottom: 6px;
-    }
+        /* Итоговая панель */
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--hint-color);
+        }
 
-    .summary-line.total {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      border-top: 1px solid var(--border);
-      padding-top: 8px;
-      margin-top: 8px;
-    }
+            .summary-line.total {
+                font-size: 18px;
+                font-weight: 800;
+                color: var(--text-color);
+                border-top: 1px solid var(--border-color);
+                padding-top: 10px;
+                margin-top: 8px;
+            }
 
-    .bottom-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--card-bg);
-      padding: 12px 16px;
-      border-top: 1px solid var(--border);
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-      z-index: 100;
-    }
+        /* Фиксированная кнопка внизу */
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            padding: 12px 14px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
+            border-top: 1px solid var(--border-color);
+            z-index: 99;
+        }
 
-    .submit-btn {
-      width: 100%;
-      padding: 14px;
-      background: var(--btn);
-      color: var(--btn-text);
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: var(--button-color);
+            color: var(--button-text-color);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
 
-    .submit-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  </style>
+            .btn-submit:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+    </style>
 </head>
 <body>
 
-  <!-- Шапка -->
-  <div class="header">
-    <div class="header-logo">F</div>
-    <div class="header-title">
-      <h1>Farovon</h1>
-      <p>Оформление оптового и розничного заказа</p>
-    </div>
-  </div>
-
-  <!-- Список товаров -->
-  <div class="card">
-    <div class="section-title">
-      <span>Товары</span>
-      <span id="items-count">1 поз.</span>
+    <div class="header">
+        <div class="brand-title">🌾 FAROVON</div>
+        <span style="font-size: 12px; color: var(--hint-color);">Оформление заказа</span>
     </div>
 
-    <!-- Скрытый datalist для удобного автозаполнения -->
-    <datalist id="products-catalog"></datalist>
+    <!-- Блок товаров -->
+    <div class="card">
+        <div class="section-title">
+            <span>Список товаров</span>
+            <span id="items-count-badge" style="font-size: 12px; font-weight: normal; color: var(--hint-color);">0 поз.</span>
+        </div>
 
-    <div id="products-container"></div>
+        <div id="items-container">
+            <!-- Сюда динамически добавляются строки товаров -->
+        </div>
 
-    <button type="button" class="add-btn" id="add-product-btn">
-      <span>+</span> Добавить еще вид товара
-    </button>
-  </div>
-
-  <!-- Способ получения -->
-  <div class="card">
-    <div class="section-title">Способ получения</div>
-
-    <div class="delivery-toggle">
-      <div class="toggle-option">
-        <input type="radio" id="delivery-type-delivery" name="delivery-type" value="delivery" checked>
-        <label for="delivery-type-delivery">🚚 Доставка</label>
-      </div>
-      <div class="toggle-option">
-        <input type="radio" id="delivery-type-pickup" name="delivery-type" value="pickup">
-        <label for="delivery-type-pickup">🏬 Самовывоз</label>
-      </div>
+        <button type="button" class="btn-add-item" id="add-item-btn">
+            <span>+</span> Добавить еще товар
+        </button>
     </div>
 
-    <!-- Блок доставки (показывается только при доставке) -->
-    <div id="delivery-details-block">
-      <div class="address-card">
-        <strong>📍 Ваш адрес:</strong>
-        <div id="user-address-text">г. Душанбе (определено ботом)</div>
-      </div>
+    <!-- Блок доставки и адреса -->
+    <div class="card">
+        <div class="section-title">Способ получения</div>
 
-      <div class="summary-line">
-        <span>Стоимость доставки:</span>
-        <span id="delivery-cost-text">0 сом.</span>
-      </div>
-      <div class="info-badge">* Расчет зависит от адреса и общего веса</div>
+        <div class="delivery-toggle">
+            <div class="radio-pill selected" id="opt-delivery" onclick="setDeliveryType('delivery')">Доставка</div>
+            <div class="radio-pill" id="opt-pickup" onclick="setDeliveryType('pickup')">Самовывоз</div>
+        </div>
 
-      <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+        <div id="delivery-details-section">
+            <div class="info-box">
+                📍 Адрес доставки:<br>
+                <strong id="display-address">Определяется...</strong>
+            </div>
 
-      <!-- Услуга грузчика -->
-      <label class="checkbox-container">
-        <input type="checkbox" id="loader-checkbox">
-        <span>Нужен грузчик для выгрузки</span>
-      </label>
-      <div class="summary-line" id="loader-price-row" style="display: none;">
-        <span>Стоимость услуги грузчика:</span>
-        <span id="loader-cost-text">0 сом.</span>
-      </div>
-      <div class="info-badge" id="loader-formula-hint">Тариф: каждые 50 кг = 1 сомони (1000 кг = 20 сомони)</div>
+            <div class="summary-line">
+                <span>Стоимость доставки:</span>
+                <strong id="delivery-price-text">0 сомон</strong>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid var(--border-color); margin: 10px 0;">
+
+            <label class="checkbox-row">
+                <span>
+                  Нужна услуга грузчика? 50кг = 1 сомон
+                </span>
+                <input type="checkbox" id="loader-checkbox" onchange="calculateTotal()">
+            </label>
+
+            <div class="summary-line" id="loader-price-line" style="display: none;">
+                <span>Стоимость грузчика :</span>
+                <strong id="loader-price-text">0 сомон</strong>
+            </div>
+        </div>
     </div>
 
-    <div id="pickup-details-block" style="display: none;" class="address-card">
-      <strong>🏬 Склад самовывоза Farovon:</strong>
-      <div>Центральный логистический терминал Farovon. Услуги грузчика не требуются.</div>
+    <!-- Блок комментария -->
+    <div class="card">
+        <div class="section-title">Комментарий к заказу</div>
+        <textarea id="order-comment" rows="2" placeholder="Укажите ориентир, подъезд или пожелание..."></textarea>
     </div>
-  </div>
 
-  <!-- Комментарий -->
-  <div class="card">
-    <div class="section-title">Комментарий к заказу</div>
-    <textarea id="order-comment" rows="2" placeholder="Укажите ориентир, номер для связи или примечания..."></textarea>
-  </div>
+    <!-- Итоговая ведомость -->
+    <div class="card">
+        <div class="summary-line">
+            <span>Общий вес:</span>
+            <strong id="sum-weight">0 кг</strong>
+        </div>
+        <div class="summary-line">
+            <span>Сумма за товары:</span>
+            <strong id="sum-products">0 сомон</strong>
+        </div>
+        <div class="summary-line" id="sum-delivery-line">
+            <span>Доставка:</span>
+            <strong id="sum-delivery">0 сомон</strong>
+        </div>
+        <div class="summary-line" id="sum-loader-line" style="display: none;">
+            <span>Грузчик:</span>
+            <strong id="sum-loader">0 сомон</strong>
+        </div>
+        <div class="summary-line total">
+            <span>ИТОГО К ОПЛАТЕ:</span>
+            <span id="sum-grand-total">0 сомон</span>
+        </div>
+    </div>
 
-  <!-- Итоговая стоимость -->
-  <div class="card">
-    <div class="section-title">Расчет заказа</div>
-    <div class="summary-line">
-      <span>Общий вес:</span>
-      <span id="total-weight-text">0 кг</span>
+    <!-- Кнопка отправки -->
+    <div class="fixed-footer">
+        <button class="btn-submit" id="submit-btn" onclick="sendOrderToBot()">
+            Оформить заказ
+        </button>
     </div>
-    <div class="summary-line">
-      <span>Сумма товаров:</span>
-      <span id="products-sum-text">0 сом.</span>
-    </div>
-    <div class="summary-line">
-      <span>Доставка:</span>
-      <span id="summary-delivery-text">0 сом.</span>
-    </div>
-    <div class="summary-line" id="summary-loader-row">
-      <span>Грузчик:</span>
-      <span id="summary-loader-text">0 сом.</span>
-    </div>
-    <div class="summary-line total">
-      <span>Итого к оплате:</span>
-      <span id="total-sum-text">0 сом.</span>
-    </div>
-  </div>
 
-  <!-- Кнопка отправки в бот -->
-  <div class="bottom-bar">
-    <button class="submit-btn" id="submit-order-btn">
-      <span>Оформить заказ</span>
-      <span id="bottom-btn-total">0 сом.</span>
-    </button>
-  </div>
-
-  <script>
-    // 1. Инициализация Telegram WebApp
+    <script>
     const tg = window.Telegram?.WebApp;
     if (tg) {
-      tg.ready();
       tg.expand();
+      tg.ready();
     }
 
-    // 2. Каталог продукции Farovon (база для автодополнения и автоматического расчета веса/цены)
+    // База товаров Farovon (каталог расширяется при необходимости)
     const CATALOG = [
-      { id: 1, name: "Мука Farovon 1 сорт (50 кг)", weightPerUnit: 50, pricePerUnit: 240 },
-      { id: 2, name: "Мука Farovon высший сорт (50 кг)", weightPerUnit: 50, pricePerUnit: 270 },
-      { id: 3, name: "Мука Farovon 2 сорт (50 кг)", weightPerUnit: 50, pricePerUnit: 210 },
-      { id: 4, name: "Мука Farovon (25 кг)", weightPerUnit: 25, pricePerUnit: 140 },
-      { id: 5, name: "Сахар-песок (50 кг)", weightPerUnit: 50, pricePerUnit: 460 },
-      { id: 6, name: "Рис Лазер (25 кг)", weightPerUnit: 25, pricePerUnit: 350 },
-      { id: 7, name: "Комбикорм для птиц Farovon (50 кг)", weightPerUnit: 50, pricePerUnit: 220 },
-      { id: 8, name: "Комбикорм для КРС Farovon (50 кг)", weightPerUnit: 50, pricePerUnit: 190 },
-      { id: 9, name: "Масло растительное Farovon (5 л)", weightPerUnit: 4.6, pricePerUnit: 75 }
+      { id: 1, name: "Зар Замин высший сорт 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 2, name: "Универсальная высший сорт 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 3, name: "Белые мешки высший сорт 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 4, name: "Зар Замин голд высший сорт 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 5, name: "Анхор Элит 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 6, name: "Зар Замин коричневый Элит 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 7, name: "Экстра Сахо 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 8, name: "999 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 9, name: "Анхор профессиональный 50кг", unitWeight: 100, price: 100, unit: "мешок" },
+      { id: 10, name: "Басад профессиональный синий 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 11, name: "Худжанд профессиональный 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 12, name: "Шохон профессиональный 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 13, name: "Классик 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 14, name: "Хорека хлеб 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 15, name: "Дастархан Голд 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 16, name: "Хубджам Голд 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 17, name: "Анхор Универ 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 18, name: "Гамл 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 19, name: "Дастархан 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 20, name: "Зар Замин Универ красный 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 21, name: "Золотое Поля 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 22, name: "Казак нан 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 23, name: "Шохон Универ 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 24, name: "Гап Нес Стандарт 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 25, name: "Хорека макарон красный 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 26, name: "Хорека макарон синий 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 27, name: "Хорека Печенье 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 28, name: "Муслим 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 29, name: "Макарон желтый 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 30, name: "Анхор народный 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 31, name: "Достык Агро 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 32, name: "Пекерь 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 33, name: "Казахастанская Мука 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 34, name: "Анхор доступный 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 35, name: "Байсад доступный коричневый 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 36, name: "Худжанд доступный 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 37, name: "Шохин доступный 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 38, name: "УНЫ доступный 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 39, name: "ХАН 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 40, name: "Анхор домашний 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 41, name: "Нонпаз домашний 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 43, name: "Шохон домашний 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 44, name: "Гап Нест Бюджет 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 45, name: "Байсад 2 сорт 50кг", unitWeight: 50, price: 100, unit: "мешок" },
+      { id: 46, name: "Анхор профессиональный 25кг", unitWeight: 25, price: 50, unit: "мешок" },
+      { id: 47, name: "Дастархан 10кг", unitWeight: 10, price: 50, unit: "мешок" },
+      { id: 48, name: "Пекерь 10кг", unitWeight: 10, price: 50, unit: "мешок" },
+      { id: 49, name: "Дастархан 5кг", unitWeight: 5, price: 50, unit: "мешок" },
+      { id: 50, name: "Дастархан 25кг", unitWeight: 25, price: 50, unit: "мешок" },
+      { id: 51, name: "Худжанд 25кг", unitWeight: 25, price: 50, unit: "мешок" },
+      { id: 52, name: "Зар Замин высший сорт 10кг", unitWeight: 10, price: 50, unit: "мешок" },
+      { id: 53, name: "Зар Замин высший сорт 5кг", unitWeight: 5, price: 50, unit: "мешок" },
+      { id: 54, name: "Шохон 10кг", unitWeight: 10, price: 50, unit: "мешок" },
+      { id: 55, name: "Традиционная 10кг", unitWeight: 10, price: 50, unit: "мешок" },
+      { id: 56, name: "Традиционная 5кг", unitWeight: 5, price: 50, unit: "мешок" },
+      { id: 57, name: "Савия народный 10кг", unitWeight: 10, price: 50, unit: "мешок" },
+      { id: 58, name: "Савия народный 5кг", unitWeight: 5, price: 50, unit: "мешок" },
+      { id: 59, name: "Для Выпечки 10кг", unitWeight: 10, price: 50, unit: "мешок" },
+      { id: 60, name: "Для Выпечки 5кг", unitWeight: 5, price: 50, unit: "мешок" },
+      { id: 61, name: "Для Выпечки 2кг", unitWeight: 2, price: 50, unit: "мешок" },
+      { id: 62, name: "Для Манты 10кг", unitWeight: 10, price: 50, unit: "мешок" },
+      { id: 63, name: "Для Манты 5кг", unitWeight: 5, price: 50, unit: "мешок" },
+      { id: 64, name: "Для Манты 2кг", unitWeight: 2, price: 50, unit: "мешок" },
+      { id: 65, name: "Традиционная 2кг", unitWeight: 2, price: 50, unit: "мешок" },
+      { id: 66, name: "Гап Нест Стандарт 10кг", unitWeight: 10, price: 50, unit: "мешок" },
+      { id: 67, name: "2 сорт неотмывающийся 45кг", unitWeight: 45, price: 100, unit: "мешок" },
+      { id: 68, name: "Соль 1кг", unitWeight: 1, price: 10, unit: "мешок" },
+      { id: 69, name: "Жмых хлопковый (Кунджора) 40кг", unitWeight: 40, price: 50, unit: "мешок" },
+      { id: 70, name: "Комбикорм Росс 308 старт 40кг", unitWeight: 40, price: 50, unit: "мешок" },
+      { id: 71, name: "Комбикорм Росс 308 рост 40кг", unitWeight: 40, price: 50, unit: "мешок" },
+      { id: 72, name: "Комбикорм Росс 308 финиш 40кг", unitWeight: 40, price: 50, unit: "мешок" },
+      { id: 73, name: "1 коропка Масло 0,5 литер", unitWeight: 9.2, price: 50, unit: "каропка" },
+      { id: 74, name: "1 коропка Масло 1 литер", unitWeight: 14.6, price: 50, unit: "каропка" },
+      { id: 75, name: "1 коропка Масло 2 литер", unitWeight: 11.7, price: 50, unit: "каропка" },
+      { id: 76, name: "1 коропка Масло 3 литер", unitWeight: 17.25, price: 50, unit: "каропка" },
+      { id: 77, name: "1 коропка Масло 4,5 литер", unitWeight: 13, price: 50, unit: "каропка" },
+      { id: 78, name: "1 коропка Масло 5 литер", unitWeight: 14.35, price: 50, unit: "каропка" },
+      { id: 80, name: "1 коропка Масло 8 литер", unitWeight: 15.2, price: 50, unit: "каропка" },
+      { id: 81, name: "1 коропка Масло 10 литер", unitWeight: 18.4, price: 50, unit: "каропка" },
+      { id: 82, name: "1 коропка Масло 0,5кг", unitWeight: 15.2, price: 50, unit: "каропка" }
     ];
 
-    // Заполнение datalist
-    const datalist = document.getElementById('products-catalog');
-    CATALOG.forEach(p => {
-      const option = document.createElement('option');
-      option.value = p.name;
-      datalist.appendChild(option);
-    });
-
-    // 3. Получение адреса и параметров доставки из URL (переданных ботом C#)
+    // Считывание адреса из параметров ссылки (?address=...) или initData
     const urlParams = new URLSearchParams(window.location.search);
-    const passedAddress = urlParams.get('address') || (tg?.initDataUnsafe?.user ? "Адрес из профиля клиента" : "г. Душанбе, ул. Айни");
-    const baseDeliveryCostPerTon = parseFloat(urlParams.get('deliveryRate')) || 50; // Базовая ставка за тонну
+    const userAddress = urlParams.get('address') || "Хистеварз";
+    document.getElementById("display-address").innerText = userAddress;
 
-    document.getElementById('user-address-text').innerText = decodeURIComponent(passedAddress);
-
-    // 4. Управление строками товаров
-    const productsContainer = document.getElementById('products-container');
-    const addProductBtn = document.getElementById('add-product-btn');
+    let deliveryType = "delivery"; // "delivery" или "pickup"
     let rowIdCounter = 0;
 
-    function createProductRow() {
+    // Нечеткий поиск (Fuzzy Match) для подсказок с учетом опечаток
+    function fuzzySearch(query) {
+      const clean = query.trim().toLowerCase();
+      if (!clean) return [];
+
+      return CATALOG.filter(item => {
+        const itemText = item.name.toLowerCase();
+        // Прямое вхождение или пословный поиск
+        if (itemText.includes(clean)) return true;
+        const words = clean.split(/\s+/);
+        return words.every(w => itemText.includes(w));
+      });
+    }
+
+    // Добавление строки товара
+    function addProductRow(preselectedProduct = null) {
       rowIdCounter++;
       const id = rowIdCounter;
-      const row = document.createElement('div');
-      row.className = 'product-row';
-      row.id = `row-${id}`;
+
+      const container = document.getElementById("items-container");
+      const row = document.createElement("div");
+      row.className = "product-row";
+      row.id = `item-row-${id}`;
 
       row.innerHTML = `
-        <button type="button" class="remove-btn" onclick="removeRow(${id})">&times;</button>
-        <div class="form-group">
-          <label>Вид товара (введите для поиска):</label>
-          <input type="text" list="products-catalog" class="product-input" placeholder="Начните вводить название..." oninput="onProductChange(${id})">
+        <div class="row-header">
+          <span class="item-counter">Позиция #${id}</span>
+          <button type="button" class="btn-remove" onclick="removeProductRow(${id})">×</button>
         </div>
-        <div class="qty-weight-grid">
-          <div class="form-group">
-            <label>Количество (шт/мешков):</label>
-            <input type="number" min="1" value="1" class="qty-input" oninput="onProductChange(${id})">
+        <div class="input-group">
+          <label>Наименование товара</label>
+          <input type="text"
+                 id="input-name-${id}"
+                 autocomplete="off"
+                 placeholder="Начните ввод (мука, сахар, масло...)"
+                 oninput="onNameInput(${id})"
+                 onfocus="onNameInput(${id})"
+                 value="${preselectedProduct ? preselectedProduct.name : ''}">
+          <div class="suggestions-list" id="suggestions-${id}"></div>
+          <input type="hidden" id="prod-id-${id}" value="${preselectedProduct ? preselectedProduct.id : ''}">
+        </div>
+
+        <div class="qty-calc-grid">
+          <div class="input-group" style="margin-bottom:0;">
+            <label>Количество (штук)</label>
+            <input type="number"
+                   id="qty-${id}"
+                   min="1"
+                   value="${preselectedProduct ? 1 : 1}"
+                   oninput="onQtyChange(${id})">
           </div>
-          <div class="form-group">
-            <label>Вес единицы (кг):</label>
-            <input type="number" step="0.1" class="weight-input" placeholder="0" readonly style="background:#eaedf1;">
+          <div>
+            <label>Цена за ед.</label>
+            <input type="text" id="unit-price-${id}" disabled value="${preselectedProduct ? preselectedProduct.price + ' смн' : '—'}">
           </div>
         </div>
-        <div class="row-summary">
-          <span>Общий вес: <b class="row-total-weight">0</b> кг</span>
-          <span>Сумма: <span class="highlight row-total-price">0</span> сом.</span>
+
+        <div class="subtotal-badge">
+          <span>Вес: <strong id="row-weight-${id}">0 кг</strong></span>
+          <span>Сумма: <strong id="row-price-${id}">0 сомон</strong></span>
         </div>
       `;
 
-      productsContainer.appendChild(row);
-      updateItemsCount();
-      calculateTotals();
-    }
+      container.appendChild(row);
 
-    window.removeRow = function(id) {
-      const allRows = document.querySelectorAll('.product-row');
-      if (allRows.length <= 1) {
-        alert("Заказ должен содержать минимум 1 товар!");
-        return;
-      }
-      const row = document.getElementById(`row-${id}`);
-      if (row) row.remove();
-      updateItemsCount();
-      calculateTotals();
-    };
-
-    window.onProductChange = function(id) {
-      const row = document.getElementById(`row-${id}`);
-      const nameInput = row.querySelector('.product-input').value.trim();
-      const qtyInput = row.querySelector('.qty-input');
-      const weightInput = row.querySelector('.weight-input');
-      const rowTotalWeight = row.querySelector('.row-total-weight');
-      const rowTotalPrice = row.querySelector('.row-total-price');
-
-      let qty = parseInt(qtyInput.value) || 0;
-      if (qty < 1) qty = 1;
-
-      // Ищем товар в каталоге
-      const item = CATALOG.find(p => p.name.toLowerCase() === nameInput.toLowerCase());
-
-      if (item) {
-        weightInput.value = item.weightPerUnit;
-        const totalWeight = item.weightPerUnit * qty;
-        const totalPrice = item.pricePerUnit * qty;
-
-        rowTotalWeight.innerText = totalWeight.toFixed(1);
-        rowTotalPrice.innerText = totalPrice.toFixed(2);
-        row.dataset.price = totalPrice;
-        row.dataset.weight = totalWeight;
-        row.dataset.name = item.name;
-        row.dataset.qty = qty;
-        row.dataset.unitWeight = item.weightPerUnit;
-      } else {
-        weightInput.value = "";
-        rowTotalWeight.innerText = "0";
-        rowTotalPrice.innerText = "0";
-        row.dataset.price = 0;
-        row.dataset.weight = 0;
-        row.dataset.name = nameInput;
-        row.dataset.qty = qty;
-        row.dataset.unitWeight = 0;
-      }
-
-      calculateTotals();
-    };
-
-    function updateItemsCount() {
-      const count = document.querySelectorAll('.product-row').length;
-      document.getElementById('items-count').innerText = `${count} поз.`;
-    }
-
-    addProductBtn.addEventListener('click', createProductRow);
-
-    // 5. Логика доставки и грузчика
-    const deliveryRadio = document.getElementById('delivery-type-delivery');
-    const pickupRadio = document.getElementById('delivery-type-pickup');
-    const deliveryBlock = document.getElementById('delivery-details-block');
-    const pickupBlock = document.getElementById('pickup-details-block');
-    const loaderCheckbox = document.getElementById('loader-checkbox');
-    const loaderRow = document.getElementById('loader-price-row');
-    const summaryLoaderRow = document.getElementById('summary-loader-row');
-
-    function toggleDeliveryType() {
-      if (deliveryRadio.checked) {
-        deliveryBlock.style.display = 'block';
-        pickupBlock.style.display = 'none';
-        summaryLoaderRow.style.display = 'flex';
-      } else {
-        deliveryBlock.style.display = 'none';
-        pickupBlock.style.display = 'block';
-        loaderCheckbox.checked = false; // При самовывозе грузчик не нужен
-        loaderRow.style.display = 'none';
-        summaryLoaderRow.style.display = 'none';
-      }
-      calculateTotals();
-    }
-
-    deliveryRadio.addEventListener('change', toggleDeliveryType);
-    pickupRadio.addEventListener('change', toggleDeliveryType);
-
-    loaderCheckbox.addEventListener('change', () => {
-      loaderRow.style.display = loaderCheckbox.checked ? 'flex' : 'none';
-      calculateTotals();
-    });
-
-    // 6. Главный пересчет всех итогов
-    function calculateTotals() {
-      let totalProductsSum = 0;
-      let totalWeightKg = 0;
-
-      const rows = document.querySelectorAll('.product-row');
-      rows.forEach(r => {
-        totalProductsSum += parseFloat(r.dataset.price || 0);
-        totalWeightKg += parseFloat(r.dataset.weight || 0);
+      // Закрытие выпадающего списка при клике вне его
+      document.addEventListener('click', function(e) {
+        if (!row.contains(e.target)) {
+          const sug = document.getElementById(`suggestions-${id}`);
+          if (sug) sug.style.display = 'none';
+        }
       });
 
-      // Расчет доставки
-      let deliveryCost = 0;
-      if (deliveryRadio.checked && totalWeightKg > 0) {
-        // Тариф рассчитывается от базовой ставки за тонну (минимум 30 сом.)
-        const tons = totalWeightKg / 1000;
-        deliveryCost = Math.max(30, Math.ceil(tons * baseDeliveryCostPerTon));
+      if (preselectedProduct) {
+        updateRowCalculations(id, preselectedProduct);
       }
 
-      // Расчет услуги грузчика: 1000кг ÷ 50кг = 20 сомони (1 мешок 50кг = 1 сомони)
-      let loaderCost = 0;
-      if (deliveryRadio.checked && loaderCheckbox.checked && totalWeightKg > 0) {
-        const bags50kg = Math.ceil(totalWeightKg / 50);
-        loaderCost = bags50kg * 1; // 1 сом за каждые 50 кг => 1000 кг = 20 сом
-      }
-
-      const totalGrand = totalProductsSum + deliveryCost + loaderCost;
-
-      // Обновление UI
-      document.getElementById('total-weight-text').innerText = `${totalWeightKg.toFixed(1)} кг`;
-      document.getElementById('products-sum-text').innerText = `${totalProductsSum.toFixed(2)} сом.`;
-      document.getElementById('delivery-cost-text').innerText = `${deliveryCost.toFixed(2)} сом.`;
-      document.getElementById('summary-delivery-text').innerText = deliveryRadio.checked ? `${deliveryCost.toFixed(2)} сом.` : '0 сом. (Самовывоз)';
-      document.getElementById('loader-cost-text').innerText = `${loaderCost.toFixed(2)} сом.`;
-      document.getElementById('summary-loader-text').innerText = loaderCheckbox.checked ? `${loaderCost.toFixed(2)} сом.` : 'Не требуется';
-      document.getElementById('total-sum-text').innerText = `${totalGrand.toFixed(2)} сом.`;
-      document.getElementById('bottom-btn-total').innerText = `${totalGrand.toFixed(2)} сом.`;
-
-      return {
-        totalProductsSum,
-        totalWeightKg,
-        deliveryCost,
-        loaderCost,
-        totalGrand
-      };
+      updateItemsBadge();
     }
 
-    // 7. Сбор данных и отправка в C# Бот через sendData
-    document.getElementById('submit-order-btn').addEventListener('click', () => {
-      const rows = document.querySelectorAll('.product-row');
-      const items = [];
+    function removeProductRow(id) {
+      const rows = document.querySelectorAll(".product-row");
+      if (rows.length <= 1) {
+        alert("Заказ должен содержать минимум один товар!");
+        return;
+      }
+      const el = document.getElementById(`item-row-${id}`);
+      if (el) el.remove();
+      updateItemsBadge();
+      calculateTotal();
+    }
 
-      for (let r of rows) {
-        const name = r.dataset.name;
-        const qty = parseInt(r.dataset.qty);
-        const weight = parseFloat(r.dataset.weight);
-        const price = parseFloat(r.dataset.price);
+    function onNameInput(rowId) {
+      const input = document.getElementById(`input-name-${rowId}`);
+      const sugBox = document.getElementById(`suggestions-${rowId}`);
+      const matches = fuzzySearch(input.value);
 
-        if (!name || isNaN(price) || price <= 0) {
-          alert("Пожалуйста, заполните корректно все выбранные товары.");
-          return;
-        }
-
-        items.push({
-          name: name,
-          quantity: qty,
-          weightKg: weight,
-          priceSomoni: price
-        });
+      if (matches.length === 0) {
+        sugBox.innerHTML = `<div style="padding:10px; font-size:12px; color:var(--hint-color);">Ничего не найдено</div>`;
+        sugBox.style.display = "block";
+        return;
       }
 
-      const totals = calculateTotals();
-      const isDelivery = deliveryRadio.checked;
+      sugBox.innerHTML = matches.map(item => `
+        <div class="suggestion-item" onclick="selectProduct(${rowId}, ${item.id})">
+          <span>${item.name}</span>
+          <strong style="color: var(--button-color);">${item.price} смн</strong>
+        </div>
+      `).join('');
 
-      const orderPayload = {
-        source: "Farovon WebApp",
-        items: items,
-        deliveryType: isDelivery ? "delivery" : "pickup",
-        address: isDelivery ? decodeURIComponent(passedAddress) : "Самовывоз со склада",
-        deliveryCost: totals.deliveryCost,
-        needLoader: isDelivery && loaderCheckbox.checked,
-        loaderCost: totals.loaderCost,
-        totalWeightKg: totals.totalWeightKg,
-        productsSum: totals.totalProductsSum,
-        totalGrandSum: totals.totalGrand,
-        comment: document.getElementById('order-comment').value.trim(),
-        timestamp: new Date().toISOString()
+      sugBox.style.display = "block";
+    }
+
+    function selectProduct(rowId, productId) {
+      const product = CATALOG.find(p => p.id === productId);
+      if (!product) return;
+
+      document.getElementById(`prod-id-${rowId}`).value = product.id;
+      document.getElementById(`input-name-${rowId}`).value = product.name;
+      document.getElementById(`unit-price-${rowId}`).value = product.price + " смн";
+      document.getElementById(`suggestions-${rowId}`).style.display = "none";
+
+      updateRowCalculations(rowId, product);
+      calculateTotal();
+    }
+
+    function onQtyChange(rowId) {
+      const prodId = document.getElementById(`prod-id-${rowId}`).value;
+      if (!prodId) return;
+      const product = CATALOG.find(p => p.id == prodId);
+      if (product) {
+        updateRowCalculations(rowId, product);
+        calculateTotal();
+      }
+    }
+
+    function updateRowCalculations(rowId, product) {
+      let qty = parseInt(document.getElementById(`qty-${rowId}`).value) || 0;
+      if (qty < 1) qty = 1;
+
+      const totalRowWeight = qty * product.unitWeight;
+      const totalRowCost = qty * product.price;
+
+      document.getElementById(`row-weight-${rowId}`).innerText = `${totalRowWeight.toFixed(1)} кг`;
+      document.getElementById(`row-price-${rowId}`).innerText = `${totalRowCost} сомон`;
+    }
+
+    function updateItemsBadge() {
+      const count = document.querySelectorAll(".product-row").length;
+      document.getElementById("items-count-badge").innerText = `${count} поз.`;
+    }
+
+    function setDeliveryType(type) {
+      deliveryType = type;
+      const optDel = document.getElementById("opt-delivery");
+      const optPick = document.getElementById("opt-pickup");
+      const delSection = document.getElementById("delivery-details-section");
+      const sumDelLine = document.getElementById("sum-delivery-line");
+
+      if (type === 'delivery') {
+        optDel.classList.add("selected");
+        optPick.classList.remove("selected");
+        delSection.style.display = "block";
+        sumDelLine.style.display = "flex";
+      } else {
+        optPick.classList.add("selected");
+        optDel.classList.remove("selected");
+        delSection.style.display = "none";
+        sumDelLine.style.display = "none";
+        // Отключаем грузчика при самовывозе
+        document.getElementById("loader-checkbox").checked = false;
+      }
+      calculateTotal();
+    }
+
+    // Главный расчет заказа
+    function calculateTotal() {
+      let totalWeight = 0;
+      let total1 = 0;
+      let total2 = 0;
+      let totalProductPrice = 0;
+
+      const rows = document.querySelectorAll(".product-row");
+      rows.forEach(row => {
+        const id = row.id.replace("item-row-", "");
+        const prodId = document.getElementById(`prod-id-${id}`).value;
+        const qty = parseInt(document.getElementById(`qty-${id}`).value) || 0;
+
+        if (prodId && qty > 0) {
+          const prod = CATALOG.find(p => p.id == prodId);
+          if (prod) {
+          totalWeight += qty * prod.unitWeight;  
+            if(prod.unit == "мешок")
+          {
+            total1 += qty * prod.unitWeight;
+          }
+            if(prod.unit == "каропка")
+          {
+            total2 += qty;
+          }
+            totalProductPrice += qty * prod.price;
+          }
+        }
+      });
+
+      // 1. Расчет доставки (если вес > 0 и выбран тип Доставка)
+      // Пример тарифа: базовый 20 сомон + 0.15 сомон за кг
+      let deliveryPrice = 0;
+      if (deliveryType === "delivery" && totalWeight > 0) 
+      {
+      if(userAddress == "Хистеварз")
+      {
+        if(50 > totalWeight <= 500)
+      {
+        deliveryPrice = totalWeight * 0.07;
+      }
+      else if(500 > totalWeight <= 1050)
+      {
+        deliveryPrice = totalWeight * 0.06;
+      }
+      else if(1050 > totalWeight <= 1550)
+      {
+        deliveryPrice = totalWeight * 0.0533;
+      }
+      else if(1550 > totalWeight <= 3050)
+      {
+        deliveryPrice = totalWeight * 0.05;
+      }
+      else if(3550 > totalWeight <= 4050)
+      {
+        deliveryPrice = totalWeight * 0.045;
+      }
+      else if(4050 > totalWeight <= 4550)
+      {
+        deliveryPrice = totalWeight * 0.0422;
+      }
+      else if(4550 > totalWeight <= 5050)
+      {
+        deliveryPrice = totalWeight * 0.044;
+      }
+      }
+      }
+
+      // 2. Расчет грузчика: 1000кг ÷ 50кг = 10 сомон (каждые 50 кг = 1 сомони)
+      let loaderPrice = 0;
+      const needLoader = document.getElementById("loader-checkbox").checked && deliveryType === "delivery";
+      if (needLoader && totalWeight > 0) {
+        const bags50 = Math.ceil(total1 / 50);
+        loaderPrice += total2 * 0.5;
+        loaderPrice += bags50 * 1;
+      }
+
+      // Обновление интерфейса
+      document.getElementById("sum-weight").innerText = `${totalWeight.toFixed(1)} кг`;
+      document.getElementById("sum-products").innerText = `${totalProductPrice} сомон`;
+      document.getElementById("delivery-price-text").innerText = `${deliveryPrice} сомон`;
+      document.getElementById("sum-delivery").innerText = `${deliveryPrice} сомон`;
+
+      const loaderLine = document.getElementById("loader-price-line");
+      const sumLoaderLine = document.getElementById("sum-loader-line");
+      if (needLoader) {
+        loaderLine.style.display = "flex";
+        sumLoaderLine.style.display = "flex";
+        document.getElementById("loader-price-text").innerText = `${loaderPrice} сомон`;
+        document.getElementById("sum-loader").innerText = `${loaderPrice} сомон`;
+      } else {
+        loaderLine.style.display = "none";
+        sumLoaderLine.style.display = "none";
+      }
+
+      const grandTotal = totalProductPrice + (deliveryType === 'delivery' ? deliveryPrice : 0) + loaderPrice;
+      document.getElementById("sum-grand-total").innerText = `${grandTotal} сомон`;
+    }
+
+    // Отправка боту Farovon
+    function sendOrderToBot() {
+      const items = [];
+      const rows = document.querySelectorAll(".product-row");
+
+      rows.forEach(row => {
+        const id = row.id.replace("item-row-", "");
+        const prodId = document.getElementById(`prod-id-${id}`).value;
+        const qty = parseInt(document.getElementById(`qty-${id}`).value) || 0;
+
+        if (prodId && qty > 0) {
+          const prod = CATALOG.find(p => p.id == prodId);
+          if (prod) {
+            items.push({
+              id: prod.id,
+              name: prod.name,
+              qty: qty,
+              weight: qty * prod.unitWeight,
+              price: qty * prod.price
+            });
+          }
+        }
+      });
+
+      if (items.length === 0) {
+        alert("Пожалуйста, выберите хотя бы один товар из каталога!");
+        return;
+      }
+
+      const needLoader = document.getElementById("loader-checkbox").checked && deliveryType === "delivery";
+      const comment = document.getElementById("order-comment").value.trim();
+
+      const totalWeight = items.reduce((acc, x) => acc + x.weight, 0);
+      const totalProdPrice = items.reduce((acc, x) => acc + x.price, 0);
+      const deliveryPrice = (deliveryType === "delivery") ? (20 + Math.ceil(totalWeight * 0.15)) : 0;
+      const loaderPrice = needLoader ? Math.ceil(totalWeight / 50) * 20 : 0;
+      const grandTotal = totalProdPrice + deliveryPrice + loaderPrice;
+
+      const payload = {
+        bot_name: "Farovon",
+        delivery_type: deliveryType, // "delivery" или "pickup"
+        address: (deliveryType === "delivery") ? userAddress : "Самовывоз со склада",
+        need_loader: needLoader,
+        loader_price: loaderPrice,
+        delivery_price: deliveryPrice,
+        total_weight_kg: totalWeight,
+        total_products_price: totalProdPrice,
+        grand_total: grandTotal,
+        comment: comment,
+        items: items
       };
 
-      // Отправка боту
+      // Передача данных боту через официальное Telegram WebApp API
       if (tg && tg.sendData) {
-        tg.sendData(JSON.stringify(orderPayload));
+        tg.sendData(JSON.stringify(payload));
       } else {
-        console.log("Данные заказа для бота Farovon:", orderPayload);
-        alert("Заказ сформирован (вне Telegram): \n" + JSON.stringify(orderPayload, null, 2));
+        // Fallback для тестирования в обычном браузере
+        console.log("Данные для отправки боту Farovon:", payload);
+        alert("Тестовый режим (вне Telegram):\n" + JSON.stringify(payload, null, 2));
       }
-    });
+    }
 
-    // Создаем начальную первую строку
-    createProductRow();
-  </script>
+    // Слушатели событий
+    document.getElementById("add-item-btn").addEventListener("click", () => addProductRow());
+
+    // Инициализация при загрузке: добавляем первую позицию
+    window.addEventListener("DOMContentLoaded", () => {
+      addProductRow(CATALOG[0]);
+    });
+    </script>
 </body>
 </html>
