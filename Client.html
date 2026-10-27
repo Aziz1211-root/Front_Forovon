@@ -352,6 +352,23 @@
                 <span>Стоимость грузчика :</span>
                 <strong id="loader-price-text">0 сомон</strong>
             </div>
+
+            <div class="delivery-fields">
+            <label for="delivery-date">Дата доставки:</label>
+            <input type="date" id="delivery-date" name="delivery_date" required>
+
+            <label for="delivery-time">Время доставки:</label>
+            <input type="time" id="delivery-time" name="delivery_time" required>
+            </div>
+            <script>
+                    const dateInput = document.getElementById('delivery-date');
+                    const today = new Date();
+                    const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+                          .toISOString()
+                          .slice(0, 10);
+
+                    dateInput.min = localDate;
+            </script>
         </div>
     </div>
 
@@ -618,14 +635,35 @@
     }
 
     function onQtyChange(rowId) {
-      const prodId = document.getElementById(`prod-id-${rowId}`).value;
-      if (!prodId) return;
-      const product = CATALOG.find(p => p.id == prodId);
-      if (product) {
+    // Находим поле ввода количества для этой строки
+    const qtyInput = document.getElementById(`qty-${rowId}`); // Предположим, поле называется так
+    
+    if (qtyInput) {
+        let val = qtyInput.value;
+        
+        // Превращаем в целое число (убираем плавающую точку, если она вдруг попала)
+        let intVal = parseInt(val, 10);
+        
+        // Если введено пустое поле, ноль или минус — ставим минимум 1 (или 0, в зависимости от логики)
+        if (isNaN(intVal) || intVal < 1) {
+            intVal = 1; 
+        }
+        
+        // Возвращаем исправленное целое число обратно в поле ввода
+        qtyInput.value = intVal;
+    }
+
+    // Дальше идет ваш стандартный код расчетов
+    const prodId = document.getElementById(`prod-id-${rowId}`).value;
+    if (!prodId) return;
+    
+    const product = CATALOG.find(p => p.id == prodId);
+    if (product) {
         updateRowCalculations(rowId, product);
         calculateTotal();
-      }
     }
+}
+
 
     function updateRowCalculations(rowId, product) {
       let qty = parseInt(document.getElementById(`qty-${rowId}`).value) || 0;
@@ -800,21 +838,25 @@
       const totalWeight = items.reduce((acc, x) => acc + x.weight, 0);
       const totalProdPrice = items.reduce((acc, x) => acc + x.price, 0);
       const deliveryPrice = (deliveryType === "delivery") ? (20 + Math.ceil(totalWeight * 0.15)) : 0;
-      const loaderPrice = needLoader ? Math.ceil(totalWeight / 50) * 20 : 0;
-      const grandTotal = totalProdPrice + deliveryPrice + loaderPrice;
+      const loaderPrice1 = needLoader ? Math.ceil(totalWeight / 50) * 1 : 0;
+      const grandTotal = totalProdPrice + deliveryPrice + loaderPrice1;
+      const date = document.getElementById("delivery-date").value;
+      const time = document.getElementById("delivery-time").value;
 
       const payload = {
         bot_name: "Farovon",
         delivery_type: deliveryType, // "delivery" или "pickup"
         address: (deliveryType === "delivery") ? userAddress : "Самовывоз со склада",
         need_loader: needLoader,
-        loader_price: loaderPrice,
+        loader_price: loaderPrice1,
         delivery_price: deliveryPrice,
         total_weight_kg: totalWeight,
         total_products_price: totalProdPrice,
         grand_total: grandTotal,
         comment: comment,
-        items: items
+        items: items,
+        date: date,
+        time: time
       };
 
       // Передача данных боту через официальное Telegram WebApp API
