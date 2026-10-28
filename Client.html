@@ -742,7 +742,7 @@
       let deliveryPrice = 0;
       if (deliveryType === "delivery" && totalWeight > 0) 
       {
-      if(userAddress == "Хистеварз")
+      if(userAddress == "Хистеварз"||userAddress == "Кайрокум")
       {
         if(50 > totalWeight <= 500)
       {
@@ -760,6 +760,10 @@
       {
         deliveryPrice = totalWeight * 0.05;
       }
+      else if(3050 > totalWeight <= 3550)
+      {
+        deliveryPrice = totalWeight * 0.0485;
+      }
       else if(3550 > totalWeight <= 4050)
       {
         deliveryPrice = totalWeight * 0.045;
@@ -772,6 +776,76 @@
       {
         deliveryPrice = totalWeight * 0.044;
       }
+      }
+      else if(userAddress == "Кулангир"||userAddress == "Румон"||userAddress == "Шайхбурхон"||userAddress == "Унчи"||userAddress == "Гулистон"||userAddress == "Эхсон"||userAddress == "Панчшанбе"||userAddress == "Универмаг"||userAddress == "Пчелка"||userAddress == "Себзор"||userAddress == "Ева"||userAddress == "Гозиен"||userAddress == "Автовакзал")
+      {
+       if(50 > totalWeight <= 500)
+      {
+        deliveryPrice = totalWeight * 0.07;
+      }
+      else if(500 > totalWeight <= 1050)
+      {
+        deliveryPrice = totalWeight * 0.06;
+      }
+      else if(1050 > totalWeight <= 1550)
+      {
+        deliveryPrice = totalWeight * 0.0566;
+      }
+      else if(1550 > totalWeight <= 3050)
+      {
+        deliveryPrice = totalWeight * 0.0466;
+      }
+      else if(3050 > totalWeight <= 3550)
+      {
+        deliveryPrice = totalWeight * 0.0457;
+      }
+      else if(3550 > totalWeight <= 4050)
+      {
+        deliveryPrice = totalWeight * 0.0425;
+      }
+      else if(4050 > totalWeight <= 4550)
+      {
+        deliveryPrice = totalWeight * 0.04;
+      }
+      else if(4550 > totalWeight <= 5050)
+      {
+        deliveryPrice = totalWeight * 0.042;
+      } 
+      }
+      else if(userAddress == "Ором"||userAddress == "Абрешим"||userAddress == "Промзона"||userAddress == "Чашма"||userAddress == "Мир"||userAddress == "18 Мкр"||userAddress == "19 Мкр"||userAddress == "20 Мкр"||userAddress == "Учбог"||userAddress == "Сартукай"||userAddress == "Палос"||userAddress == "Сумчак")
+      {
+       if(50 > totalWeight <= 500)
+      {
+        deliveryPrice = totalWeight * 0.09;
+      }
+      else if(500 > totalWeight <= 1050)
+      {
+        deliveryPrice = totalWeight * 0.075;
+      }
+      else if(1050 > totalWeight <= 1550)
+      {
+        deliveryPrice = totalWeight * 0.0666;
+      }
+      else if(1550 > totalWeight <= 3050)
+      {
+        deliveryPrice = totalWeight * 0.05;
+      }
+      else if(3050 > totalWeight <= 3550)
+      {
+        deliveryPrice = totalWeight * 0.0485;
+      }
+      else if(3550 > totalWeight <= 4050)
+      {
+        deliveryPrice = totalWeight * 0.0425;
+      }
+      else if(4050 > totalWeight <= 4550)
+      {
+        deliveryPrice = totalWeight * 0.0422;
+      }
+      else if(4550 > totalWeight <= 5050)
+      {
+        deliveryPrice = totalWeight * 0.044;
+      } 
       }
       }
 
