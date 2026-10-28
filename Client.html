@@ -306,7 +306,7 @@
     <!-- Блок товаров -->
     <div class="card">
         <div class="section-title">
-            <span>Список товаров</span>
+            <span id = "add_name">Список товаров</span>
             <span id="items-count-badge" style="font-size: 12px; font-weight: normal; color: var(--hint-color);">0 поз.</span>
         </div>
 
@@ -415,7 +415,10 @@
       tg.expand();
       tg.ready();
     }
-
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get(`name`);
+    const suername = params.get(`suername`);
+    document.getElementById("add_name").innerText = "Клиент "+name+" "+suername;
     // База товаров Farovon (каталог расширяется при необходимости)
     const CATALOG = [
       { id: 1, name: "Зар Замин высший сорт 50кг", unitWeight: 50, price: 100, unit: "мешок" },
@@ -502,7 +505,7 @@
 
     // Считывание адреса из параметров ссылки (?address=...) или initData
     const urlParams = new URLSearchParams(window.location.search);
-    const userAddress = urlParams.get('address') || "Хистеварз";
+    const userAddress = urlParams.get('id_addres') || "Хистеварз";
     document.getElementById("display-address").innerText = userAddress;
 
     let deliveryType = "delivery"; // "delivery" или "pickup"
