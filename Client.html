@@ -707,6 +707,139 @@
       calculateTotal();
     }
 
+
+
+    function calculateTotal_deliver()
+    {
+      const rows = document.querySelectorAll(".product-row");
+      rows.forEach(row => {
+        const id = row.id.replace("item-row-", "");
+        const prodId = document.getElementById(`prod-id-${id}`).value;
+        const qty = parseInt(document.getElementById(`qty-${id}`).value) || 0;
+
+        if (prodId && qty > 0) {
+          const prod = CATALOG.find(p => p.id == prodId);
+          if (prod) {
+          totalWeight += qty * prod.unitWeight;
+          }
+        }
+      });
+      // 1. Расчет доставки (если вес > 0 и выбран тип Доставка)
+      let deliveryPrice = 0;
+      if (deliveryType === "delivery" && totalWeight > 0) 
+      {
+      if(userAddress == "Хистеварз"||userAddress == "Кайрокум")
+      {
+        if(10 < totalWeight && totalWeight <= 500)
+      {
+        deliveryPrice = totalWeight * 0.07;
+      }
+      else if(500 < totalWeight && totalWeight <= 1050)
+      {
+        deliveryPrice = totalWeight * 0.06;
+      }
+      else if(1050 < totalWeight && totalWeight <= 1550)
+      {
+        deliveryPrice = totalWeight * 0.0533;
+      }
+      else if(1550 < totalWeight && totalWeight <= 3050)
+      {
+        deliveryPrice = totalWeight * 0.05;
+      }
+      else if(3050 < totalWeight && totalWeight <= 3550)
+      {
+        deliveryPrice = totalWeight * 0.0485;
+      }
+      else if(3550 < totalWeight && totalWeight <= 4050)
+      {
+        deliveryPrice = totalWeight * 0.045;
+      }
+      else if(4050 < totalWeight &&totalWeight <= 4550)
+      {
+        deliveryPrice = totalWeight * 0.0422;
+      }
+      else if(4550 < totalWeight)
+      {
+        deliveryPrice = totalWeight * 0.044;
+      }
+      }
+      else if(userAddress == "Кулангир"||userAddress == "Румон"||userAddress == "Шайхбурхон"||userAddress == "Унчи"||userAddress == "Гулистон"||userAddress == "Эхсон"||userAddress == "Панчшанбе"||userAddress == "Универмаг"||userAddress == "Пчелка"||userAddress == "Себзор"||userAddress == "Ева"||userAddress == "Гозиен"||userAddress == "Автовакзал")
+      {
+       if(10 < totalWeight && totalWeight <= 500)
+      {
+        deliveryPrice = totalWeight * 0.07;
+      }
+      else if(500 < totalWeight && totalWeight <= 1050)
+      {
+        deliveryPrice = totalWeight * 0.06;
+      }
+      else if(1050 < totalWeight && totalWeight <= 1550)
+      {
+        deliveryPrice = totalWeight * 0.0566;
+      }
+      else if(1550 < totalWeight && totalWeight <= 3050)
+      {
+        deliveryPrice = totalWeight * 0.0466;
+      }
+      else if(3050 < totalWeight && totalWeight <= 3550)
+      {
+        deliveryPrice = totalWeight * 0.0457;
+      }
+      else if(3550 < totalWeight && totalWeight <= 4050)
+      {
+        deliveryPrice = totalWeight * 0.0425;
+      }
+      else if(4050 < totalWeight && totalWeight <= 4550)
+      {
+        deliveryPrice = totalWeight * 0.04;
+      }
+      else if(4550 < totalWeight)
+      {
+        deliveryPrice = totalWeight * 0.042;
+      } 
+      }
+      else if(userAddress == "Ором"||userAddress == "Абрешим"||userAddress == "Промзона"||userAddress == "Чашма"||userAddress == "Мир"||userAddress == "18 Мкр"||userAddress == "19 Мкр"||userAddress == "20 Мкр"||userAddress == "Учбог"||userAddress == "Сартукай"||userAddress == "Палос"||userAddress == "Сумчак")
+      {
+       if(10 < totalWeight && totalWeight <= 500)
+      {
+        deliveryPrice = totalWeight * 0.09;
+      }
+      else if(500 < totalWeight && totalWeight <= 1050)
+      {
+        deliveryPrice = totalWeight * 0.075;
+      }
+      else if(1050 < totalWeight && totalWeight <= 1550)
+      {
+        deliveryPrice = totalWeight * 0.0666;
+      }
+      else if(1550 < totalWeight && totalWeight <= 3050)
+      {
+        deliveryPrice = totalWeight * 0.05;
+      }
+      else if(3050 < totalWeight && totalWeight <= 3550)
+      {
+        deliveryPrice = totalWeight * 0.0485;
+      }
+      else if(3550 < totalWeight && totalWeight <= 4050)
+      {
+        deliveryPrice = totalWeight * 0.0425;
+      }
+      else if(4050 < totalWeight && totalWeight <= 4550)
+      {
+        deliveryPrice = totalWeight * 0.0422;
+      }
+      else if(4550 < totalWeight)
+      {
+        deliveryPrice = totalWeight * 0.044;
+      } 
+      }
+      }
+      return deliveryPrice;
+    }
+
+
+
+
     // Главный расчет заказа
     function calculateTotal() {
       let totalWeight = 0;
@@ -738,111 +871,110 @@
       });
 
       // 1. Расчет доставки (если вес > 0 и выбран тип Доставка)
-      // Пример тарифа: базовый 20 сомон + 0.15 сомон за кг
       let deliveryPrice = 0;
       if (deliveryType === "delivery" && totalWeight > 0) 
       {
       if(userAddress == "Хистеварз"||userAddress == "Кайрокум")
       {
-        if(50 > totalWeight <= 500)
+        if(10 < totalWeight && totalWeight <= 500)
       {
         deliveryPrice = totalWeight * 0.07;
       }
-      else if(500 > totalWeight <= 1050)
+      else if(500 < totalWeight && totalWeight <= 1050)
       {
         deliveryPrice = totalWeight * 0.06;
       }
-      else if(1050 > totalWeight <= 1550)
+      else if(1050 < totalWeight && totalWeight <= 1550)
       {
         deliveryPrice = totalWeight * 0.0533;
       }
-      else if(1550 > totalWeight <= 3050)
+      else if(1550 < totalWeight && totalWeight <= 3050)
       {
         deliveryPrice = totalWeight * 0.05;
       }
-      else if(3050 > totalWeight <= 3550)
+      else if(3050 < totalWeight && totalWeight <= 3550)
       {
         deliveryPrice = totalWeight * 0.0485;
       }
-      else if(3550 > totalWeight <= 4050)
+      else if(3550 < totalWeight && totalWeight <= 4050)
       {
         deliveryPrice = totalWeight * 0.045;
       }
-      else if(4050 > totalWeight <= 4550)
+      else if(4050 < totalWeight &&totalWeight <= 4550)
       {
         deliveryPrice = totalWeight * 0.0422;
       }
-      else if(4550 > totalWeight <= 5050)
+      else if(4550 < totalWeight)
       {
         deliveryPrice = totalWeight * 0.044;
       }
       }
       else if(userAddress == "Кулангир"||userAddress == "Румон"||userAddress == "Шайхбурхон"||userAddress == "Унчи"||userAddress == "Гулистон"||userAddress == "Эхсон"||userAddress == "Панчшанбе"||userAddress == "Универмаг"||userAddress == "Пчелка"||userAddress == "Себзор"||userAddress == "Ева"||userAddress == "Гозиен"||userAddress == "Автовакзал")
       {
-       if(50 > totalWeight <= 500)
+       if(10 < totalWeight && totalWeight <= 500)
       {
         deliveryPrice = totalWeight * 0.07;
       }
-      else if(500 > totalWeight <= 1050)
+      else if(500 < totalWeight && totalWeight <= 1050)
       {
         deliveryPrice = totalWeight * 0.06;
       }
-      else if(1050 > totalWeight <= 1550)
+      else if(1050 < totalWeight && totalWeight <= 1550)
       {
         deliveryPrice = totalWeight * 0.0566;
       }
-      else if(1550 > totalWeight <= 3050)
+      else if(1550 < totalWeight && totalWeight <= 3050)
       {
         deliveryPrice = totalWeight * 0.0466;
       }
-      else if(3050 > totalWeight <= 3550)
+      else if(3050 < totalWeight && totalWeight <= 3550)
       {
         deliveryPrice = totalWeight * 0.0457;
       }
-      else if(3550 > totalWeight <= 4050)
+      else if(3550 < totalWeight && totalWeight <= 4050)
       {
         deliveryPrice = totalWeight * 0.0425;
       }
-      else if(4050 > totalWeight <= 4550)
+      else if(4050 < totalWeight && totalWeight <= 4550)
       {
         deliveryPrice = totalWeight * 0.04;
       }
-      else if(4550 > totalWeight <= 5050)
+      else if(4550 < totalWeight)
       {
         deliveryPrice = totalWeight * 0.042;
       } 
       }
       else if(userAddress == "Ором"||userAddress == "Абрешим"||userAddress == "Промзона"||userAddress == "Чашма"||userAddress == "Мир"||userAddress == "18 Мкр"||userAddress == "19 Мкр"||userAddress == "20 Мкр"||userAddress == "Учбог"||userAddress == "Сартукай"||userAddress == "Палос"||userAddress == "Сумчак")
       {
-       if(50 > totalWeight <= 500)
+       if(10 < totalWeight && totalWeight <= 500)
       {
         deliveryPrice = totalWeight * 0.09;
       }
-      else if(500 > totalWeight <= 1050)
+      else if(500 < totalWeight && totalWeight <= 1050)
       {
         deliveryPrice = totalWeight * 0.075;
       }
-      else if(1050 > totalWeight <= 1550)
+      else if(1050 < totalWeight && totalWeight <= 1550)
       {
         deliveryPrice = totalWeight * 0.0666;
       }
-      else if(1550 > totalWeight <= 3050)
+      else if(1550 < totalWeight && totalWeight <= 3050)
       {
         deliveryPrice = totalWeight * 0.05;
       }
-      else if(3050 > totalWeight <= 3550)
+      else if(3050 < totalWeight && totalWeight <= 3550)
       {
         deliveryPrice = totalWeight * 0.0485;
       }
-      else if(3550 > totalWeight <= 4050)
+      else if(3550 < totalWeight && totalWeight <= 4050)
       {
         deliveryPrice = totalWeight * 0.0425;
       }
-      else if(4050 > totalWeight <= 4550)
+      else if(4050 < totalWeight && totalWeight <= 4550)
       {
         deliveryPrice = totalWeight * 0.0422;
       }
-      else if(4550 > totalWeight <= 5050)
+      else if(4550 < totalWeight)
       {
         deliveryPrice = totalWeight * 0.044;
       } 
@@ -883,6 +1015,9 @@
     // Отправка боту Farovon
     function sendOrderToBot() {
       const items = [];
+      const count_box = 0;
+      const weight_basket = 0;
+
       const rows = document.querySelectorAll(".product-row");
 
       rows.forEach(row => {
@@ -901,8 +1036,17 @@
               price: qty * prod.price
             });
           }
+          if(prod.unit == "мешок")
+          {
+            count_box += qty;
+          }
+          if(prod.unit == "каропка")
+          {
+            weight_basket += qty * prod.weight;
+          }
         }
       });
+
 
       if (items.length === 0) {
         alert("Пожалуйста, выберите хотя бы один товар из каталога!");
@@ -914,8 +1058,8 @@
 
       const totalWeight = items.reduce((acc, x) => acc + x.weight, 0);
       const totalProdPrice = items.reduce((acc, x) => acc + x.price, 0);
-      const deliveryPrice = (deliveryType === "delivery") ? (20 + Math.ceil(totalWeight * 0.15)) : 0;
-      const loaderPrice1 = needLoader ? Math.ceil(totalWeight / 50) * 1 : 0;
+      const deliveryPrice = (deliveryType === "delivery") ? calculateTotal_deliver() : 0;
+      const loaderPrice1 = needLoader ? Math.ceil(weight_basket / 50) * 1 + count_box * 0.5 : 0;
       const grandTotal = totalProdPrice + deliveryPrice + loaderPrice1;
       const date = document.getElementById("delivery-date").value;
       const time = document.getElementById("delivery-time").value;
