@@ -711,6 +711,7 @@
 
     function calculateTotal_deliver()
     {
+      let totalWeight = 0;
       const rows = document.querySelectorAll(".product-row");
       rows.forEach(row => {
         const id = row.id.replace("item-row-", "");
@@ -1015,8 +1016,8 @@
     // Отправка боту Farovon
     function sendOrderToBot() {
       const items = [];
-      const count_box = 0;
-      const weight_basket = 0;
+      let count_box = 0;
+      let weight_basket = 0;
 
       const rows = document.querySelectorAll(".product-row");
 
