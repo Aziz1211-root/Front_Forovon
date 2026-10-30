@@ -835,7 +835,7 @@
       } 
       }
       }
-      return deliveryPrice;
+      return parseInt(deliveryPrice);
     }
 
 
@@ -994,16 +994,16 @@
       // Обновление интерфейса
       document.getElementById("sum-weight").innerText = `${totalWeight.toFixed(1)} кг`;
       document.getElementById("sum-products").innerText = `${totalProductPrice} сомон`;
-      document.getElementById("delivery-price-text").innerText = `${deliveryPrice} сомон`;
-      document.getElementById("sum-delivery").innerText = `${deliveryPrice} сомон`;
+      document.getElementById("delivery-price-text").innerText = `${parseInt(deliveryPrice)} сомон`;
+      document.getElementById("sum-delivery").innerText = `${parseInt(deliveryPrice)} сомон`;
 
       const loaderLine = document.getElementById("loader-price-line");
       const sumLoaderLine = document.getElementById("sum-loader-line");
       if (needLoader) {
         loaderLine.style.display = "flex";
         sumLoaderLine.style.display = "flex";
-        document.getElementById("loader-price-text").innerText = `${loaderPrice} сомон`;
-        document.getElementById("sum-loader").innerText = `${loaderPrice} сомон`;
+        document.getElementById("loader-price-text").innerText = `${parseInt(loaderPrice)} сомон`;
+        document.getElementById("sum-loader").innerText = `${parseInt(loaderPrice)} сомон`;
       } else {
         loaderLine.style.display = "none";
         sumLoaderLine.style.display = "none";
@@ -1090,8 +1090,8 @@
         delivery_type: deliveryType, // "delivery" или "pickup"
         address: (deliveryType === "delivery") ? userAddress : "Самовывоз со склада",
         need_loader: needLoader,
-        loader_price: loaderPrice1,
-        delivery_price: deliveryPrice,
+        loader_price: parseInt(loaderPrice1),
+        delivery_price: parseInt(deliveryPrice),
         total_weight_kg: totalWeight,
         total_products_price: totalProdPrice,
         grand_total: grandTotal,
