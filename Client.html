@@ -1016,8 +1016,8 @@
     // Отправка боту Farovon
     function sendOrderToBot() {
       const items = [];
-      let count_box = 0;
-      let weight_basket = 0;
+      let total1 = 0;
+      let total2 = 0;
 
       const rows = document.querySelectorAll(".product-row");
 
@@ -1037,17 +1037,36 @@
               price: qty * prod.price
             });
           }
-          if(prod.unit == "мешок")
+        }
+      });
+
+
+
+
+
+
+      const rows1 = document.querySelectorAll(".product-row");
+      rows.forEach(row => {
+        const id = row.id.replace("item-row-", "");
+        const prodId = document.getElementById(`prod-id-${id}`).value;
+        const qty = parseInt(document.getElementById(`qty-${id}`).value) || 0;
+
+        if (prodId && qty > 0) {
+          const prod = CATALOG.find(p => p.id == prodId);
+          if (prod) {
+            if(prod.unit == "мешок")
           {
-            count_box += qty;
+            total1 += qty * prod.unitWeight;
           }
-          if(prod.unit == "каропка")
+            if(prod.unit == "каропка")
           {
-            weight_basket += qty * prod.weight;
+            total2 += qty;
+          }
           }
         }
       });
 
+      
 
       if (items.length === 0) {
         alert("Пожалуйста, выберите хотя бы один товар из каталога!");
@@ -1056,11 +1075,12 @@
 
       const needLoader = document.getElementById("loader-checkbox").checked && deliveryType === "delivery";
       const comment = document.getElementById("order-comment").value.trim();
-
+      let b = total1/50;
+      b += total2*0.5;
       const totalWeight = items.reduce((acc, x) => acc + x.weight, 0);
       const totalProdPrice = items.reduce((acc, x) => acc + x.price, 0);
       const deliveryPrice = (deliveryType === "delivery") ? calculateTotal_deliver() : 0;
-      const loaderPrice1 = needLoader ? Math.ceil(weight_basket / 50) * 1 + count_box * 0.5 : 0;
+      const loaderPrice1 = needLoader ? b : 0;
       const grandTotal = totalProdPrice + deliveryPrice + loaderPrice1;
       const date = document.getElementById("delivery-date").value;
       const time = document.getElementById("delivery-time").value;
